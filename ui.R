@@ -2,6 +2,9 @@ library(shiny)
 library(shinydashboard)
 library(MASS)
 library(ggplot2)
+library(nycflights13)
+library(dplyr)
+library(plotly)
 
 shinyUI(
   dashboardPage(skin = "black",
