@@ -14,12 +14,12 @@ vuelos_flota <- right_join(vuelos, flotaAviones, by = "tailnum")
 
 # agrupamos por aerolinea
 vuelos_flota %>% 
-  group_by("name")%>%
-  summarise(
-  manuacturer1 = count(manufacturer),
-  model1 = count(model),
-  type1 = count(type)
-)
+  group_by(carrier)%>%
+  summarise(flight_count = n(), 
+            plane_count = n_distinct(tailnum),
+            manufacturer_count = n_distinct(manufacturer),
+            type_count = n_distinct(type), 
+            model_count = n_distinct(model))
 
 # histogramas de frecuencia de manufacturer, frecuencia de model, y frecuencia de type. 
 
