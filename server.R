@@ -31,8 +31,10 @@ shinyServer(function(input, output) {
   
   output$flotaGrafica <- renderUI({
     
+    observeEvent(input$flotag, { 
+    
     # histogramas de frecuencia de manufacturer, frecuencia de model, y frecuencia de type. 
-    datosFinales <- filter(vuelosTodo, name == input$aerolinea)
+    datosFinales <- filter(vuelosTodo, name == as.character(input$aerolinea))
     
     resultado$grafica1 <- renderPlot({ggplot(datosFinales, aes(x = model))+
         geom_bar()})
@@ -42,15 +44,15 @@ shinyServer(function(input, output) {
     
     resultado$grafica3 <- renderPlot({ggplot(datosFinales, aes(x = type))+
         geom_bar()})
-    
-  })
-  
+    })
+  }) 
   output$visibilidadGrafica <- renderUI({
     
     # podemos ver en la siguiente gráfica como afecta la visibilidad a la hora de salida 
-    vuelosTodo %>%
+    holi <- filter(vuelosTodo, visib == as.character(input$visibility))
+    holi %>%
       mutate(dep_delay_hr = dep_delay/60)%>%
-      select(dep_delay_hr, input$visibility) %>%
+      select(dep_delay_hr, visib) %>%
       ggplot(aes(x = visib, y = dep_delay_hr)) +
       geom_smooth()+
       xlab("Visibilidad") +
@@ -60,5 +62,6 @@ shinyServer(function(input, output) {
     
   })
 })
+
 
 
