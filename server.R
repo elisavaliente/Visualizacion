@@ -22,46 +22,48 @@ shinyServer(function(input, output) {
     vuelos_tiempo = inner_join(vuelos, weather, by = c("origin", "year", "month", "day", "hour")),
     
     # Mezclamos con la tabla de flota de aviones
-    vuelosTodo = inner_join(vuelos_tiempo, flotaAviones, by = "tailnum"),
-    
-    grafica1 = ggplot(),
-    grafica2 = ggplot(),
-    grafica3 = ggplot()
+    vuelosTodo = inner_join(vuelos_tiempo, flotaAviones, by = "tailnum")
   )
   
   output$flotaGrafica <- renderUI({
     
-    observeEvent(input$flotag, { 
-    
     # histogramas de frecuencia de manufacturer, frecuencia de model, y frecuencia de type. 
-    datosFinales <- filter(vuelosTodo, name == as.character(input$aerolinea))
+    datosFinales <- filter(vuelosTodo, name == input$aerolinea)
     
-    resultado$grafica1 <- renderPlot({ggplot(datosFinales, aes(x = model))+
-        geom_bar()})
-    
-    resultado$grafica2 <- renderPlot({ggplot(datosFinales, aes(x = manufacturer))+
-        geom_bar()})
-    
-    resultado$grafica3 <- renderPlot({ggplot(datosFinales, aes(x = type))+
-        geom_bar()})
+    ggplot(datosFinales, aes(x = manufacturer))+
+        geom_bar()
     })
-  }) 
+  output$flotaGrafica2 <- renderUI({
+    
+    datosFinales <- filter(vuelosTodo, name == input$aerolinea)
+    resultado$grafica2 <- renderPlot({ggplot(datosFinales, aes(x = model))+
+        geom_bar()})
+    
+  })
+  
+  output$flotaGrafica3 <- renderUI({
+    
+    datosFinales <- filter(vuelosTodo, name == input$aerolinea)
+    resultado$grafica3 <- renderPlot({ggplot(datosFinales, aes(x = model))+
+        geom_bar()})
+    
+  })
+  
   output$visibilidadGrafica <- renderUI({
     
     # podemos ver en la siguiente gráfica como afecta la visibilidad a la hora de salida 
-    holi <- filter(vuelosTodo, visib == as.character(input$visibility))
-    holi %>%
+    vuelosTodo %>%
       mutate(dep_delay_hr = dep_delay/60)%>%
+      filter(visib == 10)
       select(dep_delay_hr, visib) %>%
       ggplot(aes(x = visib, y = dep_delay_hr)) +
-      geom_smooth()+
+      geom_smooth() +
       xlab("Visibilidad") +
       ylab("Retraso salida") +
       ggtitle("Retraso salida por visibilidad")
-    
-    
   })
+  
+  
 })
-
 
 
