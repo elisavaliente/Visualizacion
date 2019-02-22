@@ -25,7 +25,7 @@ shinyServer(function(input, output) {
     vuelosTodo = inner_join(vuelos_tiempo, flotaAviones, by = "tailnum")
   )
   
-  output$flotaGrafica <- renderUI({
+  output$flotaGrafica <- renderPlot({
     
     # histogramas de frecuencia de manufacturer, frecuencia de model, y frecuencia de type. 
     datosFinales <- filter(vuelosTodo, name == input$aerolinea)
@@ -33,37 +33,33 @@ shinyServer(function(input, output) {
     ggplot(datosFinales, aes(x = manufacturer))+
         geom_bar()
     })
-  output$flotaGrafica2 <- renderUI({
+  output$flotaGrafica2 <- renderPlot({
     
     datosFinales <- filter(vuelosTodo, name == input$aerolinea)
-    resultado$grafica2 <- renderPlot({ggplot(datosFinales, aes(x = model))+
-        geom_bar()})
+    ggplot(datosFinales, aes(x = type))+
+        geom_bar()
     
   })
   
-  output$flotaGrafica3 <- renderUI({
+  output$flotaGrafica3 <- renderPlot({
     
     datosFinales <- filter(vuelosTodo, name == input$aerolinea)
-    resultado$grafica3 <- renderPlot({ggplot(datosFinales, aes(x = model))+
-        geom_bar()})
+    ggplot(datosFinales, aes(x = model))+
+        geom_bar()
     
   })
   
   output$visibilidadGrafica <- renderUI({
     
     # podemos ver en la siguiente gráfica como afecta la visibilidad a la hora de salida 
-    vuelosTodo %>%
+    vuelosTodo%>%
       mutate(dep_delay_hr = dep_delay/60)%>%
-      filter(visib == 10)
-      select(dep_delay_hr, visib) %>%
+      filter(visib == 10)%>%
+      select(dep_delay_hr, visib)%>%
       ggplot(aes(x = visib, y = dep_delay_hr)) +
       geom_smooth() +
       xlab("Visibilidad") +
       ylab("Retraso salida") +
       ggtitle("Retraso salida por visibilidad")
   })
-  
-  
 })
-
-
